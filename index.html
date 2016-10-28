@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>小汽车</title>
+		<link rel="stylesheet" href="css/index.css" />
+	</head>
+	<body>
+		<!--提示开始游戏-->
+		<div class="mess">
+			<p>准备</p>
+		</div>
+		<!--公路-->
+		<div class="wrapper">
+			<div class="sun"></div>
+			<div class="rode">
+				<div class="line"></div>
+			</div>
+			<div class="car"></div>
+			<div class="time">
+				<div class="time-item1">用时</div>
+				<div class="time-item2"></div>
+			</div>
+		</div>
+	</body>
+	<script src="js/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript">
+		var width = $("body").width();   //屏幕的宽度
+		var height = $("body").height(); //屏幕的高度
+		var carL = $(".car").position().left;  //小车相对屏幕的偏移
+		var speed = 200;   //设置开始的速度
+		var temp = 0;      
+		var timer = null;
+		var timerCount = 3;
+		var action = false;
+		var over = true;
+		var timerUp = null;
+		var page = 30;
+		var d1 = null;
+		var d2 = null;
+		getEnemy();
+		timer = setInterval(function(){
+			if(timerCount>0){
+				$(".mess p").html(timerCount);
+				timerCount --;
+			}
+			else{
+				$(".mess p").html("Go!");
+				clearInterval(timer);
+				setTimeout(function(){
+					d1 = new Date();
+					$(".mess p").html("");
+					action = true;
+				},100);
+			}
+		},1000);
+		$(".rode").css({"height":30*height,"top":-29*height})
+		$(".line").css({"height":height*30});
+		var flag = false;
+		//按下向上，向左，向右时触发
+		$(document).keydown(function(e){
+			if(action&&over){
+				clearInterval(timerUp)
+				if(e.keyCode==37){
+					temp -= 10;
+				}
+				if(e.keyCode == 38){
+					flag = true;
+				}
+				if(e.keyCode==39){
+					temp += 10;
+				}
+				if(flag && speed< 1000){
+					console.log("jia")
+					speed += 10;
+				}
+				console.log(speed,flag);
+				$(".car").css("left",carL+temp);	
+			}
+		});
+		//抬起向上键触发
+		$(document).keyup(function(e){
+			if(action){
+				if(e.keyCode == 38){
+					flag = false;
+					timerUp=setInterval(function(){
+						if(speed<=200){
+							clearInterval(timerUp);
+							speed = 200;
+						}
+						else{
+							speed -= 20;
+						}
+						console.log(speed)
+					},10)
+				}
+			}
+		});
+		//判断我方车是否碰到边界或者碰到敌人
+		function hasOver(){
+			if(action){
+				//console.log($(".car").offset().left,$(".rode").offset().left);
+				if($(".car").offset().left < $(".rode").offset().left){
+					over = false;
+					$(".car").addClass("peng1");
+					setTimeout(function(){
+						over = true;
+					},1000);
+					speed = 50;
+				}
+				else if($(".car").offset().left+30-width*0.2>$(".rode").offset().left){
+					over = false;
+					$(".car").addClass("peng2");
+					setTimeout(function(){
+						over = true;
+					},1000);
+					speed = 5;
+				}
+				$(".enemy").each(function(){
+					
+					if($(this).offset().top>0 && $(this).offset().top < height){
+						if($(".car").offset().left > $(this).offset().left && $(this).offset().left+30 > $(".car").offset().left && $(this).offset().top+60>$(".car").offset().top){
+							action = false;
+							$(".rode").stop();
+							$(".mess p").html("游戏结束");
+						}	
+						else if($(".car").offset().left < $(this).offset().left && $(".car").offset().left+30>$(this).offset().left && $(this).offset().top+60>$(".car").offset().top){
+							action = false;
+							$(".rode").stop();
+							$(".mess p").html("游戏结束");
+						}
+					}
+				});
+				if($(".rode").position().top == 0){
+					action = false;
+					$(".rode").stop();
+					if(localStorage.getItem("great")){
+						var great = parseInt(localStorage.getItem("great"));
+					}
+					else{
+						var great = 99999999999999999;
+					}
+					console.log(parseInt($(".time-item2").attr("time")))
+					if(great > parseInt($(".time-item2").attr("time"))){
+						great = parseInt($(".time-item2").attr("time"));
+						localStorage.setItem("great",$(".time-item2").attr("time"));
+					}
+					var s = parseInt(great/1000)>0?parseInt(great/1000)+"秒"+(great)%1000:""+(great)%1000
+					$(".mess p").html("闯关成功<br>用时："+$(".time-item2").html()+"<br>最高纪录"+s);
+				}
+			}
+		}
+		//生成敌人小汽车
+		function getEnemy(){
+			while(page>0){
+				for(var i = 0 ; i < 2 ; i++){
+					//console.log(page);
+					var left = parseInt(Math.random()*(width*0.2-30));
+					var top = parseInt(Math.random()*(height-200))+height*page;
+					var n = parseInt(Math.random()*2)+1;
+					var newEnemy = $("<div class='enemy' style='background: url(img/enemy"+n+".png) no-repeat'></div>");
+					newEnemy.offset({"left":left,"top":top});
+					$(".rode").append(newEnemy);
+				}	
+				page --;
+			}
+		}
+		//随时进行判断
+		var t = setInterval(function(){
+			if(action){
+				d2 = new Date();
+				var t = (d2.getTime()-d1.getTime());
+				$(".time-item2").attr("time",t);
+				$(".time-item2").html(parseInt(t/1000)>0?parseInt(t/1000)+"秒"+(t)%1000:""+(t)%1000)
+				move(speed);
+			}
+			hasOver();
+		},10);
+		function move(p){
+			var s = 0-$(".rode").position().top;
+			$(".rode").stop().animate({
+				"top": 0
+			},49*s*10/p,"linear");	
+		}
+	</script>
+</html>

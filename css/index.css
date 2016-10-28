@@ -1,0 +1,127 @@
+body,html,div,p,h1,h2,h3,h4,h5,h6{
+	margin: 0;
+	padding: 0;
+}
+body,html{
+	height: 100%;
+}
+body{
+	overflow: hidden;
+	width: 100%;
+	background: url(../img/bg.png) #90c95d;
+}
+.wrapper{
+	overflow: hidden;
+	position: relative;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+.sun{
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	background: radial-gradient(at 30px 30px,#fff 10%,#ff0 80%,#e6ee10 100%);
+}
+.rode{
+	position: relative;
+	width: 20%;
+	left: 50%;
+	top: 0;
+	margin-left: -10%;
+	background: #515151;
+}
+.line{
+	position: absolute;
+	top: 0;
+	width: 8px;
+	left: 50%;
+	margin-left: -4px;
+	background: url(../img/line-bg.gif) repeat;
+}
+.car{
+	position: absolute;
+	left: 50%;
+	margin-left: -15px;
+	bottom: 20px;
+	width: 30px;
+	height: 70px;
+	background: url(../img/car.png) no-repeat;
+}
+.peng2{
+	animation: move2 1s linear;
+}
+@keyframes move2{
+	0%{transform: rotate(0) translate(0,0);}
+	50%{transform: rotate(0) translate(-30px,30px);}
+	100%{transform: rotate(360deg) translate(0,0);}
+}
+.peng1{
+	animation: move1 1s linear;
+}
+@keyframes move1{
+	0%{transform: rotate(0) translate(0,0);}
+	50%{transform: rotate(0) translate(30px,-30px);}
+	100%{transform: rotate(360deg) translate(0,0);}
+}
+.enemy{
+	position: absolute;
+	width: 30px;
+	height: 70px;
+	background: url(../img/enemy1.png) no-repeat;
+	background-size: cover;
+}
+.mess{
+	z-index: 50;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height:100%;
+}
+.mess p{
+	position: relative;
+	top: 50%;
+	margin: 0 auto;
+	color: indianred;
+	font-size: 80px;
+	text-align: center;
+}
+.time{
+	position: absolute;
+	top: 10px;
+	left: 65%;
+	width: 80px;
+	height: 80px;
+	border-radius: 50%;
+	background: rgba(3,3,3,0.7);
+}
+.time-item1{
+	z-index: 2;
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	width: 54px;
+	height: 54px;
+	text-align: center;
+	line-height: 54px;
+	color: #fff;
+	border-radius: 50%;
+	border: 3px solid #fff;
+}
+.time-item2{
+	position: absolute;
+	top: 10px;
+	left: 60px;
+	width: 100px;
+	height: 60px;
+	text-align: center;
+	line-height: 60px;
+	color: #fff;
+	color: #90C95D;
+	background: rgba(3,3,3,0.7);
+}
